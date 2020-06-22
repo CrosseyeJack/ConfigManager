@@ -1,3 +1,5 @@
+# WARNING! I'm hack and slashing parts of this codebase, Expect it to have breaking changes from the forked codebase...
+
 Wifi connection and configuration manager for ESP8266 and ESP32.
 
 Forked from [https://github.com/nrwiersma/ConfigManager](https://github.com/nrwiersma/ConfigManager). The lib was close but still had some issues for my use case. So time to fork it and mod it.
