@@ -1,9 +1,6 @@
-![Logo](http://svg.wiersma.co.za/github/project?lang=cpp&title=ConfigManager&tag=wifi%20configuration%20manager)
-
-[![Build Status](https://travis-ci.com/nrwiersma/ConfigManager.svg?branch=master)](https://travis-ci.com/nrwiersma/ConfigManager)
-[![arduino-library-badge](http://www.ardu-badge.com/badge/ConfigManager.svg)](http://www.ardu-badge.com/ConfigManager)
-
 Wifi connection and configuration manager for ESP8266 and ESP32.
+
+Forked from [https://github.com/nrwiersma/ConfigManager](https://github.com/nrwiersma/ConfigManager). The lib was close but still had some issues for my use case. So time to fork it and mod it.
 
 This library was made to ease the complication of configuring Wifi and other
 settings on an ESP8266 or ESP32. It is roughly split into two parts, Wifi configuration
