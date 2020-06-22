@@ -220,8 +220,6 @@ class ConfigManager {
   void handleAPGet();
   void handleAPPost();
   void handleScanGet();
-  void handleRESTGet();
-  void handleRESTPut();
 
   bool wifiConnected();
   void setup();

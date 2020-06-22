@@ -174,48 +174,6 @@ void ConfigManager::handleScanGet() {
   server->send(200, FPSTR(mimeJSON), body);
 }
 
-void ConfigManager::handleRESTGet() {
-  DynamicJsonDocument doc(1024);
-  JsonObject obj = doc.createNestedObject();
-
-  std::list<BaseParameter*>::iterator it;
-  for (it = parameters.begin(); it != parameters.end(); ++it) {
-    if ((*it)->getMode() == set) {
-      continue;
-    }
-
-    (*it)->toJson(&obj);
-  }
-
-  String body;
-  serializeJson(obj, body);
-
-  server->send(200, FPSTR(mimeJSON), body);
-}
-
-void ConfigManager::handleRESTPut() {
-  DynamicJsonDocument doc(1024);
-  auto error = deserializeJson(doc, server->arg("plain"));
-  if (error) {
-    server->send(400, FPSTR(mimeJSON), "");
-    return;
-  }
-  JsonObject obj = doc.as<JsonObject>();
-
-  std::list<BaseParameter*>::iterator it;
-  for (it = parameters.begin(); it != parameters.end(); ++it) {
-    if ((*it)->getMode() == get) {
-      continue;
-    }
-
-    (*it)->fromJson(&obj);
-  }
-
-  writeConfig();
-
-  server->send(204, FPSTR(mimeJSON), "");
-}
-
 void ConfigManager::handleNotFound() {
   String URI =
       toStringIP(server->client().localIP()) + String(":") + String(webPort);
@@ -337,10 +295,6 @@ void ConfigManager::startApi() {
   mode = api;
 
   createBaseWebServer();
-  server->on("/settings", HTTPMethod::HTTP_GET,
-             std::bind(&ConfigManager::handleRESTGet, this));
-  server->on("/settings", HTTPMethod::HTTP_PUT,
-             std::bind(&ConfigManager::handleRESTPut, this));
 
   if (apiCallback) {
     apiCallback(server.get());

@@ -297,37 +297,3 @@ ssid=access point&password=some password
   "security": *bool*
 }
 ```
-
-## GET /settings
-
-###### Modes: *API*
-
-> Gets the settings set in ```addParameter```.
-
-+ Response 200 *(application/json)*
-
-```json
-{
-  "enabled": true,
-  "hour": 3
-}
-```
-
-## PUT /settings
-
-###### Modes: *API*
-
-> Sets the settings set in ```addParameter```.
-
-+ Request *(application/json)*
-
-```json
-{
-  "enabled": false,
-  "hour": 4
-}
-```
-
-+ Response 400 *(application/json)*
-
-+ Response 204 *(application/json)*
