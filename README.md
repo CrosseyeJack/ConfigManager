@@ -279,21 +279,3 @@ ssid=access point&password=some password
   "password": "some password"
 }
 ```
-
-## GET /scan
-
-###### Modes: *AP and API*
-
-> Scans visible networks
-
-+ Will print to Serial Monitor is `DEBUG_MODE = true`
-
-+ Response 200 *(application/json)*
-
-```json
-{
-  "ssid": "access point name",
-  "strength": *int*,
-  "security": *bool*
-}
-```

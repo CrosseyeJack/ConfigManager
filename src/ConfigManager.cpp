@@ -134,46 +134,6 @@ void ConfigManager::handleAPPost() {
   ESP.restart();
 }
 
-void ConfigManager::handleScanGet() {
-  DynamicJsonDocument doc(1024);
-  JsonArray jsonArray = doc.createNestedArray();
-
-  DebugPrintln("Scanning WiFi networks...");
-  int n = WiFi.scanNetworks();
-  DebugPrintln("scan complete");
-  if (n == 0) {
-    DebugPrintln("no networks found");
-  } else {
-    DebugPrint(n);
-    DebugPrintln(" networks found:");
-
-    for (int i = 0; i < n; ++i) {
-      String ssid = WiFi.SSID(i);
-      int rssi = WiFi.RSSI(i);
-      String security =
-          WiFi.encryptionType(i) == WIFI_OPEN ? "none" : "enabled";
-
-      DebugPrint("Name: ");
-      DebugPrint(ssid);
-      DebugPrint(" - Strength: ");
-      DebugPrint(rssi);
-      DebugPrint(" - Security: ");
-      DebugPrintln(security);
-
-      JsonObject obj = doc.createNestedObject();
-      obj["ssid"] = ssid;
-      obj["strength"] = rssi;
-      obj["security"] = security == "none" ? false : true;
-      jsonArray.add(obj);
-    }
-  }
-
-  String body;
-  serializeJson(jsonArray, body);
-
-  server->send(200, FPSTR(mimeJSON), body);
-}
-
 void ConfigManager::handleNotFound() {
   String URI =
       toStringIP(server->client().localIP()) + String(":") + String(webPort);
@@ -317,8 +277,6 @@ void ConfigManager::createBaseWebServer() {
              std::bind(&ConfigManager::handleAPGet, this));
   server->on("/", HTTPMethod::HTTP_POST,
              std::bind(&ConfigManager::handleAPPost, this));
-  server->on("/scan", HTTPMethod::HTTP_GET,
-             std::bind(&ConfigManager::handleScanGet, this));
   server->onNotFound(std::bind(&ConfigManager::handleNotFound, this));
 }
 

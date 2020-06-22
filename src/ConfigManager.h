@@ -219,7 +219,6 @@ class ConfigManager {
 
   void handleAPGet();
   void handleAPPost();
-  void handleScanGet();
 
   bool wifiConnected();
   void setup();
