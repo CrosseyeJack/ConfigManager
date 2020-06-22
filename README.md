@@ -279,3 +279,58 @@ ssid=access point&password=some password
   "password": "some password"
 }
 ```
+
+## What the fuck happened to GET /scan ?
+
+Well I felt the built in endpoint was flawed. But it can be re-added in setAPCallback
+
+add a call back where you set up configmanager
+
+```
+configManager.setAPCallback(configManagerAPStarted);
+```
+
+Then inside configManagerAPStarted add a scan endpoint. Something like this will do. Note: I just wrote this off the top of my head and not even compiled it :-P so YMMV, Worse case just rip the old /scan code out of the lib and C+P it here.
+
+```
+void configManagerAPStarted(WebServer *server)
+{
+  server->on("/scan", HTTPMethod::HTTP_GET, [server]() {
+    int n = WiFi.scanNetworks(); // Scan for networks
+    if (n == WIFI_SCAN_FAILED || n == WIFI_SCAN_RUNNING) // Failed to complete scan, just return an empty array - you will prob want to send back an error and handle that error in your ajax call.
+    {
+      server->send(200, "application/json", "[]");
+      return;
+    }
+
+    // Calculate the capacity needed to store the scanned AP's- If you tweek this then use https://arduinojson.org/v6/assistant/ to work out the capacity you will need
+    const size_t capacity = JSON_ARRAY_SIZE(n) + n*JSON_OBJECT_SIZE(3));
+    // n = the number of ssid's WiFi.scanNetworks() found, 3 = the number of params in each object
+    // And boom (headshot) a DynamicJsonDocument the size needed to store the AP's without hard coding a max size
+    // This is just a simple example, in your real code you might want to double that that you have the mem avaliable to create this doc befor actually creating it.
+    
+    // Create the json document
+    DynamicJsonDocument networkJsonDoc = DynamicJsonDocument(capacity);
+    // In my IRL implentations of this code, I normally keep networkJsonDoc as a global (So I can scan for networks in the background and not lock up the endpoint while the ESP scans for networks)
+
+    // for loop though the scanned networks and slap them into networkJsonDoc
+    // You might want to filter out any dupe SSID's here. Personally I left the dupes in and handle them in the JS on the config html page.
+    for (size_t i = 0; i < n; i++)
+    {
+      JsonObject network = networkJsonDoc.createNestedObject();
+      network["ssid"] = WiFi.SSID(i); // Add the SSID
+
+      network["strength"] = WiFi.RSSI(i); // Add the RSSI
+
+      network["security"] = (WiFi.encryptionType(i) == WIFI_AUTH_OPEN) ? false : true; // Add the protection status of this AP
+      // In this example we are presuming that no one is using enterprise WPA - so just saying "yeah we gonna need a password from you to connect to this network"
+    }
+    WiFi.scanDelete(); // Delete the scan as its not needed any more. - not really needed but might as well.
+
+    String json_string; // Create a Json String
+    serializeJson(networkJsonDoc, json_string); // convert networkJsonDoc into a json string to send it over the wire. 
+
+    server->send(200, "application/json", json_string); // Send the json string back to the client.
+  });
+}
+```
