@@ -13,9 +13,14 @@ and REST variable configuration.
 # Quick Start
 
 ## Installing
+This forked lib isn't "released" yet, so it may break at any time. :-P (I plan on attack the begin function next... You have been warned) Once I have made the major changes I need to the lib. I will start locking in versions and publishing it to lib managers. But if you really want to add this forked version before I have made my breaking changes I guess you can, just don't moan to me when I break your things :-P
 
-You can install through the Arduino Library Manager. The package name is
-**ConfigManager**.
+I use [PlatformIO](https://platformio.org/) over Arduino IDE cause I use VSCode for a ton of things. You should be able to use this lib by adding the following to your platformio.ini
+
+```
+lib_deps =
+  https://github.com/CrosseyeJack/ConfigManager.git
+```
 
 ## Usage
 
