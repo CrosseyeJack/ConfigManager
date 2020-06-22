@@ -291,13 +291,13 @@ Well I felt the built in endpoint was flawed. But it can be re-added in setAPCal
 
 add a call back where you set up configmanager
 
-```
+```cpp
 configManager.setAPCallback(configManagerAPStarted);
 ```
 
 Then inside configManagerAPStarted add a scan endpoint. Something like this will do. Note: I just wrote this off the top of my head and not even compiled it :-P so YMMV, Worse case just rip the old /scan code out of the lib and C+P it here.
 
-```
+```cpp
 void configManagerAPStarted(WebServer *server)
 {
   server->on("/scan", HTTPMethod::HTTP_GET, [server]() {
