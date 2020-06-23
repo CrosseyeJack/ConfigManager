@@ -173,6 +173,13 @@ class ConfigManager {
     setup();
   }
 
+  void begin() {
+    this->config = NULL;
+    this->configSize = 0;
+    EEPROM.begin(CONFIG_OFFSET + this->configSize);
+    setup();
+  }
+
   template <typename T>
   void addParameter(const char* name, T* variable) {
     parameters.push_back(new ConfigParameter<T>(name, variable));
