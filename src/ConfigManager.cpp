@@ -153,25 +153,29 @@ void ConfigManager::handleNotFound() {
   server->send(404, FPSTR(mimePlain), "File Not Found");
 }
 
-bool ConfigManager::wifiConnected() {
-  DebugPrint(F("Waiting for WiFi to connect"));
-
-  int i = 0;
-  while (i < wifiConnectRetries) {
-    if (WiFi.status() == WL_CONNECTED) {
-      DebugPrintln("");
+bool ConfigManager::wifiConnected(char ssid[SSID_LENGTH], char password[PASSWORD_LENGTH]) {
+  // Tweaked this to pass the SSID and PASS along. I should prob use pointers but I've not had my daily recommended allotment of caffine yet so brain not fully working.
+  // This is because this function doesn't actually attempt to retry the wifi connection. It just sits there so how ever long the user set waiting for a connection that will never come
+  // Unless it connects first time obv.
+  // With the SSID/PASS combo I can poke the wifi lib to connect again on failure until the try count expires.
+  DebugPrintln(F("Waiting for WiFi to connect"));
+  for (size_t i = 0; i < wifiConnectRetries; i++)
+  {
+    delay(wifiConnectInterval); // Wait for the wifi to connect
+    switch (WiFi.status())
+    {
+    case WL_CONNECTED:
       return true;
+
+    case WL_NO_SSID_AVAIL:
+      WiFi.begin(ssid, password[0] == '\0' ? NULL : password);
+      break;
+    
+    default:
+      break;
     }
-
-    DebugPrint(".");
-
-    delay(wifiConnectInterval);
-    i++;
   }
-
-  DebugPrintln("");
   DebugPrintln(F("Connection timed out"));
-
   return false;
 }
 
@@ -195,7 +199,7 @@ void ConfigManager::setup() {
 
   if (memcmp(magic, magicBytes, MAGIC_LENGTH) == 0) {
     WiFi.begin(ssid, password[0] == '\0' ? NULL : password);
-    if (wifiConnected()) {
+    if (wifiConnected(ssid, password)) {
       DebugPrint(F("Connected to "));
       DebugPrint(ssid);
       DebugPrint(F(" with "));

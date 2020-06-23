@@ -227,7 +227,7 @@ class ConfigManager {
   void handleAPGet();
   void handleAPPost();
 
-  bool wifiConnected();
+  bool wifiConnected(char ssid[SSID_LENGTH], char password[PASSWORD_LENGTH]);
   void setup();
   void startAP();
   void startApi();
